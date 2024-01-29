@@ -1,5 +1,6 @@
 let ary = [];
 let i = 0;
+let before = 0; //小数点フラグ
 
 $(document).ready(function(){
 let display = document.getElementById('main-display');
@@ -64,7 +65,12 @@ const divide = document.getElementById('button-divide');
   })
   /* 「00」押下時 */
   $("#button00").click(function(){
-    if(display.innerHTML != 0){
+    if(display.innerHTML != 0 &&
+      ary[i - 1] != add.innerHTML &&
+      ary[i - 1] != pull.innerHTML &&
+      ary[i - 1] != multi.innerHTML &&
+      ary[i - 1] != divide.innerHTML &&
+      ary[i - 1] != comma.innerHTML){
       box(display, zero2);
     }
   })
@@ -72,6 +78,7 @@ const divide = document.getElementById('button-divide');
   $("#buttonAC").click(function(){
     display.innerHTML = 0;
     result = 0;
+    before = 0;
   })
   /* 「.」押下時 */
   $("#button-comma").click(function(){
@@ -81,10 +88,15 @@ const divide = document.getElementById('button-divide');
        ary[i] != divide.innerHTML &&
        ary[i] != comma.innerHTML &&
        ary[i] != null){
-      i++;
-      display.innerHTML += comma.innerHTML;
-      ary[i] = comma.innerHTML;
-      i++;
+      
+      if(before == 0){
+        i++;
+        display.innerHTML += comma.innerHTML;
+        ary[i] = comma.innerHTML;
+        before = 1;
+        i++;
+      }
+
     }
   })
   /* 「+」押下時 */
@@ -95,10 +107,12 @@ const divide = document.getElementById('button-divide');
        ary[i] != divide.innerHTML &&
        ary[i] != comma.innerHTML &&
        ary[i] != null){
-      if(display.innerHTML != 0){
+      if(display.innerHTML != 0 &&
+         ary[i] != 0){
         i++;
         display.innerHTML += add.innerHTML;
         ary[i] = add.innerHTML;
+        before = 0;
         i++;
       }
     }
@@ -114,10 +128,12 @@ const divide = document.getElementById('button-divide');
       if(display.innerHTML == 0){
         display.innerHTML = pull.innerHTML;
         ary[i] = pull.innerHTML;
-      }else{
+      }else if(display.innerHTML != 0 &&
+         ary[i] != 0){
         i++;
         display.innerHTML += pull.innerHTML;
         ary[i] = pull.innerHTML;
+        before = 0;
         i++;
       }
     }
@@ -130,25 +146,30 @@ const divide = document.getElementById('button-divide');
        ary[i] != divide.innerHTML &&
        ary[i] != comma.innerHTML &&
        ary[i] != null){
-      if(display.innerHTML != 0){
+      if(display.innerHTML != 0 &&
+         ary[i] != 0){
         i++;
         display.innerHTML += multi.innerHTML;
         ary[i] = multi.innerHTML;
+        before = 0;
         i++;
       }
     }
   })
   /* 「/」押下時 */
   $("#button-divide").click(function(){
-    if(ary[i - 1] != add.innerHTML &&
-       ary[i - 1] != pull.innerHTML &&
-       ary[i - 1] != multi.innerHTML &&
-       ary[i - 1] != divide.innerHTML &&
-       ary[i - 1] != comma.innerHTML){
-      if(display.innerHTML != 0){
+    if(ary[i] != add.innerHTML &&
+       ary[i] != pull.innerHTML &&
+       ary[i] != multi.innerHTML &&
+       ary[i] != divide.innerHTML &&
+       ary[i] != comma.innerHTML &&
+       ary[i] != null){
+      if(display.innerHTML != 0 &&
+         ary[i] != 0){
         i++;
         display.innerHTML += divide.innerHTML;
         ary[i] = divide.innerHTML;
+        before = 0;
         i++;
       }
     }
@@ -159,11 +180,9 @@ const divide = document.getElementById('button-divide');
       /* 「小数点の処理」 */
       for(i = 0; i < ary.length; i++){
         if(ary[i] == comma.innerHTML){
-          console.log(ary);
           ary[i - 1] += ary[i] + ary[i + 1];
           for(i; i < ary.length; i++){
             ary[i] = ary[i + 2];
-            console.log(ary);
           }
           //console.log(ary);
           i = 0;
@@ -225,10 +244,11 @@ const divide = document.getElementById('button-divide');
 
 /* 入力された値と演算子を格納 */
 function box(display, value){
-  if(display.innerHTML == 0){
+  if(display.innerHTML == 0 &&
+     before == 0){
     display.innerHTML = value.innerHTML;
     ary[i] = value.innerHTML
-  }else{
+  }else if(ary[i] != 0){
     display.innerHTML += value.innerHTML;
     if(ary[i] == null){
       ary[i] = value.innerHTML
